@@ -1,6 +1,6 @@
 {
   "name": "react-native-stripe-api",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A small React Native library for Stripe Rest API",
   "main": "src/Stripe.js",
   "scripts": {
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xcarpentier/react-native-stripe-api.git"
+    "url": "git+https://github.com/netbeast/react-native-stripe-api.git"
   },
   "keywords": [
     "react-native",
