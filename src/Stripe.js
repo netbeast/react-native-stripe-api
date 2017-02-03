@@ -71,21 +71,23 @@ class Stripe {
     return result.json();
   }
 
-  createToken(cardNumber: string, expMonth: string, expYear: string, cvc: string): Promise {
+  createToken(cardNumber: string, expMonth: string, expYear: string, cvc: string, name: string): Promise {
     if (!cardNumber) throw new Error(`cardNumber${REQM}`);
     if (!expMonth) throw new Error(`expMonth${REQM}`);
     if (!expYear) throw new Error(`expYear${REQM}`);
     if (!cvc) throw new Error(`cvc${REQM}`);
+    if (!name) throw new Error(`name${REQM}`);
 
     return this.stripePostRequest('tokens', {
       'card[number]': cardNumber,
       'card[exp_month]': expMonth,
       'card[exp_year]': expYear,
       'card[cvc]': cvc,
+      'card[name]': name,
     });
   }
 
-  createCustomer(token: string, email: string): Promise {
+  createCustomer(token: string, email: string, ): Promise {
     if (!token) throw new Error(`token${REQM}`);
     if (!email) throw new Error(`email${REQM}`);
 
@@ -140,21 +142,22 @@ class Stripe {
     return this.stripeDeleteRequest(`customers/${customerId}/sources/${cardId}`);
   }
 
-  createSubscription(customerId: string, planId: string): Promise {
-    if (!customerId) throw new Error(`customerId${REQM}`);
-    if (!planId) throw new Error(`planId${REQM}`);
+   createSubscription(customerId: string, planId: string): Promise {
+     if (!customerId) throw new Error(`customerId${REQM}`);
+     if (!planId) throw new Error(`planId${REQM}`);
 
-    return this.stripePostRequest('subscriptions', {
-      customer: customerId,
-      plan: planId,
-    });
-  }
+     return this.stripePostRequest('subscriptions', {
+       customer: customerId,
+       plan: planId,
+     });
+   }
 
-  retrieveSubscription(subscriptionId: string): Promise {
-    if (!subscriptionId) throw new Error(`subscriptionId${REQM}`);
+   retrieveSubscription(subscriptionId: string): Promise {
+     console.log(subscriptionId)
+     if (!subscriptionId) throw new Error(`subscriptionId${REQM}`);
 
-    return this.stripePostRequest(`subscriptions/${subscriptionId}`, {});
-  }
+     return this.stripePostRequest(`subscriptions/${subscriptionId}`, {});
+   }
 }
 
 
