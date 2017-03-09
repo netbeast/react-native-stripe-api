@@ -12,9 +12,9 @@ class Stripe {
   }
 
   /**
-   * Return the default header entries : Accept and Authorization
-   * @returns {Object} Default header Accept and Authorization
-   */
+  * Return the default header entries : Accept and Authorization
+  * @returns {Object} Default header Accept and Authorization
+  */
   defaultHeader() {
     return {
       Accept: 'application/json',
@@ -23,14 +23,14 @@ class Stripe {
   }
 
   /**
-   * Generic method post to Stripe Rest API
-   * @param resource : Rest API ressource ie. tokens, charges, etc.
-   * @param properties : object, key by form parm
-   */
+  * Generic method post to Stripe Rest API
+  * @param resource : Rest API ressource ie. tokens, charges, etc.
+  * @param properties : object, key by form parm
+  */
   async stripePostRequest(resource: string, properties: Object): Promise {
     const body = Object.entries(properties)
-      .map(([key, value]) => `${key}=${value}`)
-      .reduce((previous, current) => `${previous}&${current}`, '');
+    .map(([key, value]) => `${key}=${value}`)
+    .reduce((previous, current) => `${previous}&${current}`, '');
 
     const result = await fetch(`${STRIPE_URL}${resource}`, {
       method: 'POST',
@@ -45,10 +45,10 @@ class Stripe {
   }
 
   /**
-   * Generic method to request Stripe
-   * @param id : the ID of object needed
-   * @param resource : Rest API ressource ie. tokens, charges, etc.
-   */
+  * Generic method to request Stripe
+  * @param id : the ID of object needed
+  * @param resource : Rest API ressource ie. tokens, charges, etc.
+  */
   async stripeGetRequest(resource: string, id: string): Promise {
     const result = await fetch(`${STRIPE_URL}${resource}/${id}`, {
       method: 'GET',
@@ -59,9 +59,9 @@ class Stripe {
   }
 
   /**
-   * Generic method to delete resourse
-   * @param resource : Rest API ressource ie. tokens, charges, etc.
-   */
+  * Generic method to delete resourse
+  * @param resource : Rest API ressource ie. tokens, charges, etc.
+  */
   async stripeDeleteRequest(resource: string): Promise {
     const result = await fetch(`${STRIPE_URL}${resource}`, {
       method: 'DELETE',
@@ -100,65 +100,70 @@ class Stripe {
 
   createCharge(amount: number, customer: string, description: string,
     currency: string = 'eur'): Promise {
-    if (!amount && amount !== 0) throw new Error(`amount${REQM}`);
-    if (!customer) throw new Error(`customer${REQM}`);
-    if (!description) throw new Error(`description${REQM}`);
+      if (!amount && amount !== 0) throw new Error(`amount${REQM}`);
+      if (!customer) throw new Error(`customer${REQM}`);
+      if (!description) throw new Error(`description${REQM}`);
 
-    return this.stripePostRequest('charges', {
-      amount,
-      currency,
-      customer,
-      description,
-    });
+      return this.stripePostRequest('charges', {
+        amount,
+        currency,
+        customer,
+        description,
+      });
+    }
+
+    refundCharge(chargeId: string): Promise {
+      if (!chargeId) throw new Error(`chargeId${REQM}`);
+
+      return this.stripePostRequest('refunds', {
+        charge: chargeId,
+      });
+    }
+
+    getCustomer(customerId: string): Promise {
+      if (!customerId) throw new Error(`customerId${REQM}`);
+
+      return this.stripeGetRequest('customers', customerId);
+    }
+
+    addCardToCustomer(token: string, customerId: string): Promise {
+      if (!token) throw new Error(`token${REQM}`);
+      if (!customerId) throw new Error(`customerId${REQM}`);
+
+      return this.stripePostRequest(`customers/${customerId}/sources`, {
+        source: token,
+      });
+    }
+
+    destroyCardOfCustomer(cardId: string, customerId: string): Promise {
+      if (!cardId) throw new Error(`cardId${REQM}`);
+      if (!customerId) throw new Error(`customerId${REQM}`);
+
+      return this.stripeDeleteRequest(`customers/${customerId}/sources/${cardId}`);
+    }
+
+    createSubscription(customerId: string, planId: string, couponId?: string): Promise {
+      if (!customerId) throw new Error(`customerId${REQM}`);
+      if (!planId) throw new Error(`planId${REQM}`);
+
+      const body = {
+        customer: customerId,
+        plan: planId,
+      },
+
+      if (couponId) {
+        body['coupon'] = couponId
+      }
+
+      return this.stripePostRequest('subscriptions', body);
+    }
+
+    retrieveSubscription(subscriptionId: string): Promise {
+      if (!subscriptionId) throw new Error(`subscriptionId${REQM}`);
+
+      return this.stripePostRequest(`subscriptions/${subscriptionId}`, {});
+    }
   }
 
-  refundCharge(chargeId: string): Promise {
-    if (!chargeId) throw new Error(`chargeId${REQM}`);
 
-    return this.stripePostRequest('refunds', {
-      charge: chargeId,
-    });
-  }
-
-  getCustomer(customerId: string): Promise {
-    if (!customerId) throw new Error(`customerId${REQM}`);
-
-    return this.stripeGetRequest('customers', customerId);
-  }
-
-  addCardToCustomer(token: string, customerId: string): Promise {
-    if (!token) throw new Error(`token${REQM}`);
-    if (!customerId) throw new Error(`customerId${REQM}`);
-
-    return this.stripePostRequest(`customers/${customerId}/sources`, {
-      source: token,
-    });
-  }
-
-  destroyCardOfCustomer(cardId: string, customerId: string): Promise {
-    if (!cardId) throw new Error(`cardId${REQM}`);
-    if (!customerId) throw new Error(`customerId${REQM}`);
-
-    return this.stripeDeleteRequest(`customers/${customerId}/sources/${cardId}`);
-  }
-
-   createSubscription(customerId: string, planId: string): Promise {
-     if (!customerId) throw new Error(`customerId${REQM}`);
-     if (!planId) throw new Error(`planId${REQM}`);
-
-     return this.stripePostRequest('subscriptions', {
-       customer: customerId,
-       plan: planId,
-     });
-   }
-
-   retrieveSubscription(subscriptionId: string): Promise {
-     console.log(subscriptionId)
-     if (!subscriptionId) throw new Error(`subscriptionId${REQM}`);
-
-     return this.stripePostRequest(`subscriptions/${subscriptionId}`, {});
-   }
-}
-
-
-export default Stripe;
+  export default Stripe;
