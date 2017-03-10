@@ -149,7 +149,7 @@ class Stripe {
       const body = {
         customer: customerId,
         plan: planId,
-      },
+      }
 
       if (couponId) {
         body['coupon'] = couponId
