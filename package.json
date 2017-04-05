@@ -1,6 +1,6 @@
 {
   "name": "react-native-stripe-api",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "A small React Native library for Stripe Rest API",
   "main": "src/Stripe.js",
   "scripts": {
@@ -51,8 +51,8 @@
     "jest-cli": "12.1.1"
   },
   "peerDependencies": {
-    "babel-polyfill": "6.9.1",
-    "react": "15.1.0",
-    "react-native": "0.27.2"
+    "babel-polyfill": ">=6.9.1",
+    "react": ">=15.1.0",
+    "react-native": ">=0.27.2"
   }
 }
